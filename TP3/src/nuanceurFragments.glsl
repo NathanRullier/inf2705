@@ -51,6 +51,8 @@ uniform sampler2D laTextureNorm;
 in Attribs {
     vec4 couleur;
     vec3 N;
+    vec3 L[3];
+    vec3 O;
     vec4 TexCoord;
 } AttribsIn;
 
@@ -70,7 +72,33 @@ void main( void )
     if (typeIllumination == 0) {
         FragColor = clamp( AttribsIn.couleur, 0.0, 1.0 );
     } else {
+        vec4 couleur = (FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient) +
+        LightSource.ambient * FrontMaterial.ambient;
         FragColor = 0.01*AttribsIn.couleur + vec4( 0.5, 0.5, 0.5, 1.0 ); // gris moche!
+        for(int i = 0; i<3;i++)
+        {
+            vec3 L = normalize( AttribsIn.L[i] );
+            float NdotL = dot( N, L );
+            if ( NdotL > 0.0 )
+            {
+                couleur += FrontMaterial.diffuse * LightSource.diffuse * NdotL;
+
+                vec3 O = normalize( AttribsIn.O );
+                float NdotHV;
+
+                // composante spéculaire
+                if (utiliseBlinn){
+                    vec3 halfV = normalize(vec3(O + L));
+                    NdotHV = max( dot(N,halfV), 0.0 );
+                } else {
+                    NdotHV = max(0.0, dot(reflect(-L, N), O));
+                }
+
+                couleur += FrontMaterial.specular * LightSource.specular * pow( NdotHV, FrontMaterial.shininess );
+            }
+
+            FragColor = clamp( couleur, 0.0, 1.0 );
+        }
     }
     // texture de couleurs utilisée: aucune, dé, échiquier, mur, métal, mosaique
     if (numTexCoul != 0) {

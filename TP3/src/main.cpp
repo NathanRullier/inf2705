@@ -343,14 +343,6 @@ void FenetreTP::initialiser()
         -1.0, 0.0, 0.0,     -1.0, 0.0, 0.0,     -1.0, 0.0, 0.0,     -1.0, 0.0, 0.0,     
         0.0, 0.0, 1.0,      0.0, 0.0, 1.0,      0.0, 0.0, 1.0,      0.0, 0.0, 1.0,     
     };
-    GLfloat textCoord[2*4*6] = {
-        0.66, 0.33,     1.00, 0.33,     0.66, 0.00,     1.00, 0.00,     //P3, P2, P0, P1
-        1.00, 0.66,     0.66, 0.66,     1.00, 0.33,     0.66, 0.33,     // P5, P4, P1, P0
-        0.33, 0.66,     0.33, 1.00,     0.66, 0.66,     0.66, 1.00,     // P6, P5, P2, P1
-        0.00, 0.66,     0.33, 0.66,     0.00, 0.33,     0.33, 0.33,     // P7, P6, P3, P2
-        0.66, 0.33,     0.66, 0.00,     0.33, 0.33,     0.33, 0.00,     // P4, P7, P0, P3
-        0.33, 0.66,     0.66, 0.66,     0.33, 0.33,     0.66, 0.33,     // P4, P5, P7, P6
-    };
 
     // allouer les objets OpenGL
     glGenVertexArrays( 2, vao );
@@ -371,8 +363,39 @@ void FenetreTP::initialiser()
 
     // partie 2: charger le VBO pour les coordonnées de texture
     // Le de
+
+    GLfloat textCoord1[2*4*6] = {
+        0.66, 0.33,     1.00, 0.33,     0.66, 0.00,     1.00, 0.00,     //P3, P2, P0, P1
+        1.00, 0.66,     0.66, 0.66,     1.00, 0.33,     0.66, 0.33,     // P5, P4, P1, P0
+        0.33, 0.66,     0.33, 1.00,     0.66, 0.66,     0.66, 1.00,     // P6, P5, P2, P1
+        0.00, 0.66,     0.33, 0.66,     0.00, 0.33,     0.33, 0.33,     // P7, P6, P3, P2
+        0.66, 0.33,     0.66, 0.00,     0.33, 0.33,     0.33, 0.00,     // P4, P7, P0, P3
+        0.33, 0.66,     0.66, 0.66,     0.33, 0.33,     0.66, 0.33,     // P4, P5, P7, P6
+    };
     glBindBuffer( GL_ARRAY_BUFFER, vbo[2]);
-    glBufferData( GL_ARRAY_BUFFER, sizeof(textCoord), textCoord, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(textCoord1), textCoord1, GL_STATIC_DRAW );
+
+    GLfloat textCoord2[2*4*6] = {
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0
+    };
+    glBindBuffer( GL_ARRAY_BUFFER, vbo[3]);
+    glBufferData( GL_ARRAY_BUFFER, sizeof(textCoord2), textCoord2, GL_STATIC_DRAW );
+
+    GLfloat textCoord3[2*4*6] = {
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+    0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0
+    };
+    glBindBuffer( GL_ARRAY_BUFFER, vbo[4]);
+    glBufferData( GL_ARRAY_BUFFER, sizeof(textCoord3), textCoord3, GL_STATIC_DRAW );
     glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
     glEnableVertexAttribArray( locTexCoord );
 
@@ -436,6 +459,18 @@ void afficherModele()
         case 1:
             // afficher le cube
             glBindVertexArray( vao[0] );
+            if(varsUnif.numTexCoul == 1) {
+                glBindBuffer( GL_ARRAY_BUFFER, vbo[2]);
+                glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+            }
+            else if(varsUnif.numTexCoul == 2){
+                glBindBuffer( GL_ARRAY_BUFFER, vbo[3]);
+                glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+            }
+            else {
+                glBindBuffer( GL_ARRAY_BUFFER, vbo[4]);
+                glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+            }
             if ( Etat::utiliseTess )
             {
                 // partie 4: afficher le cube avec des GL_PATCHES

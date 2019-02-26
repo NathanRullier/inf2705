@@ -58,7 +58,10 @@ layout(location=8) in vec4 TexCoord;
 out Attribs {
     vec4 couleur;
     vec3 N;
+    vec3 L[3];
+    vec3 O;
     vec4 TexCoord;
+
 } AttribsOut;
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
@@ -77,6 +80,7 @@ void main( void )
     AttribsOut.N = matrNormale * Normal;
     vec3 pos = ( matrVisu * matrModel * Vertex ).xyz;
     vec3 O = normalize(-pos); // vecteur qui pointe vers le (0,0,0), c'est-à-dire vers la caméra
+    AttribsOut.O = O;
     AttribsOut.couleur = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
     //Gouraud
     if (typeIllumination == 0) {
@@ -105,6 +109,9 @@ void main( void )
     } else {
         //Phong
         AttribsOut.couleur = Color; // à modifier!
+        for(int i = 0; i < 3; i++){
+            AttribsOut.L[i] = ((matrVisu * LightSource.position[i] / LightSource.position[i].w).xyz - pos);
+        }
     }
 
 
