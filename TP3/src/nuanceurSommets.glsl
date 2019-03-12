@@ -61,7 +61,6 @@ out Attribs {
     vec3 L[3];
     vec3 O;
     vec4 TexCoord;
-
 } AttribsOut;
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
