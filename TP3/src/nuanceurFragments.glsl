@@ -101,8 +101,14 @@ void main( void )
         }
     }
     // texture de couleurs utilisée: aucune, dé, échiquier, mur, métal, mosaique
+    
     if (numTexCoul != 0) {
+        if(afficheTexelFonce == 0){
         FragColor = (FragColor * texture(laTextureCoul, AttribsIn.TexCoord.st));
+        }
+        else if( afficheTexelFonce == 1){
+            FragColor = texture(laTextureCoul, AttribsIn.TexCoord.st);
+        }
     } 
 
     if ( afficheNormales ) FragColor = vec4(N,1.0);

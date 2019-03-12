@@ -108,7 +108,6 @@ void main( void )
         }
     } else {
         //Phong
-        AttribsOut.couleur = Color; // à modifier!
         for(int i = 0; i < 3; i++){
             AttribsOut.L[i] = ((matrVisu * LightSource.position[i] / LightSource.position[i].w).xyz - pos);
         }
