@@ -82,7 +82,7 @@ void main( void )
     AttribsOut.O = O;
     AttribsOut.couleur = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
     //Gouraud
-    if (typeIllumination == 0) {
+    if (typeIllumination == 0 ) {
         vec3 halfV;
         vec3 L;
         float NdotL;
@@ -105,12 +105,12 @@ void main( void )
             // composante ambiante
             AttribsOut.couleur += FrontMaterial.ambient * LightSource.ambient;
         }
-    } else {
-        //Phong
-        for(int i = 0; i < 3; i++){
-            AttribsOut.L[i] = ((matrVisu * LightSource.position[i] / LightSource.position[i].w).xyz - pos);
-        }
+    } 
+      
+    for(int i = 0; i < 3; i++){
+        AttribsOut.L[i] = normalize(((matrVisu * LightSource.position[i]).xyz) - pos);
     }
+    
 
 
     // couleur du sommet
