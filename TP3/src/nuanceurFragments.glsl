@@ -64,9 +64,17 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
     return( grisUniforme );
 }
 
+vec3 modifierNormale( vec3 N )
+{
+    vec4 couleur = texture( laTextureNorm, AttribsIn.TexCoord.st);
+    vec3 dN = normalize( ( couleur.rgb  - 0.5 ) * 2.0 );
+    return normalize(N + dN);
+}
+
 void main( void )
 {
     vec3 N = normalize(AttribsIn.N);
+    if ( numTexNorm != 0 ) N = modifierNormale( N );
 
     // assigner la couleur finale
     if (typeIllumination == 0) {

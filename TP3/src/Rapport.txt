@@ -1,7 +1,8 @@
 Q1: On pourrait vouloir que la texture de l'échiquier se « déplace » sur
     l'objet en fonction du temps, comme si elle glissait sur la surface dans
     une direction donnée. Comment implanteriez-vous cette fonctionnalité?
-
+En mettant les coordonnes d'affichage de la texture de lechequier accessible globalement. On incrementent ensuite la valeur de la position de la texture en x ou en y
+avec un modulo un pour s'assurer que l'entierte de la texture est affiche sur chacune des faces.
 
 Q2: Vous avez probablement remarqué que même en demandant un très grand
     niveau de tessellation, le générateur de tessellation ne produira pas
@@ -10,4 +11,6 @@ Q2: Vous avez probablement remarqué que même en demandant un très grand
     avec glGet() et elle doit être au moins 64.)
     Que doit-on alors faire si on veut, malgré tout, une tessellation deux
     fois plus fine dans chaque direction?
-
+    
+    Si nous voulons ameliorer la niveau de tesselation, il est possible de simplement dessiner deux patchs deux fois plus petites au lieu de une. Ainsi,
+    il est possible de doubler le niveau de tesselation pour une certaine region sans pour autant modifier le niveau de tesselation maximal d'une patch.
