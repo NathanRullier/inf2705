@@ -76,5 +76,7 @@ void main()
     AttribsOut.L[1] = interpole( AttribsIn[0].L[1], AttribsIn[1].L[1], AttribsIn[2].L[1], AttribsIn[3].L[1] );
     AttribsOut.L[2] = interpole( AttribsIn[0].L[2], AttribsIn[1].L[2], AttribsIn[2].L[2], AttribsIn[3].L[2] );
     AttribsOut.O = interpole( AttribsIn[0].O, AttribsIn[1].O, AttribsIn[2].O, AttribsIn[3].O );
-    AttribsOut.TexCoord = interpole( AttribsIn[0].TexCoord, AttribsIn[1].TexCoord, AttribsIn[2].TexCoord, AttribsIn[3].TexCoord );
+    //AttribsOut.TexCoord = interpole( AttribsIn[0].TexCoord, AttribsIn[1].TexCoord, AttribsIn[2].TexCoord, AttribsIn[3].TexCoord );
+    //AttribsOut.TexCoord = AttribsOut.TexCoord.st;
+
 }
