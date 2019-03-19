@@ -74,7 +74,7 @@ void main( void )
     } else {
         vec4 couleur = (FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient) +
         LightSource.ambient * FrontMaterial.ambient;
-        FragColor = 0.01*AttribsIn.couleur + vec4( 0.5, 0.5, 0.5, 1.0 ); // gris moche!
+        FragColor = 0.01*AttribsIn.couleur + vec4(0.7,0.7,0.7,1.0);
         for(int i = 0; i<3;i++)
         {
             vec3 L = normalize( AttribsIn.L[i] );
@@ -102,13 +102,25 @@ void main( void )
     }
     // texture de couleurs utilisée: aucune, dé, échiquier, mur, métal, mosaique
     
+    vec3 grey = vec3(0.5,0.5,0.5);
+    vec4 texColor = texture(laTextureCoul, AttribsIn.TexCoord.st);
+
     if (numTexCoul != 0) {
-        if(afficheTexelFonce == 0){
-        FragColor = (FragColor * texture(laTextureCoul, AttribsIn.TexCoord.st));
+        if(afficheTexelFonce == 1)
+        {
+            if (all(lessThan(texColor.rgb, grey)))
+            {
+                    texColor.rgb = grey;
+            }
         }
-        else if( afficheTexelFonce == 1){
-            FragColor = texture(laTextureCoul, AttribsIn.TexCoord.st);
+        if(afficheTexelFonce == 2 ){
+            if (all(lessThan(texColor.rgb, grey)))
+            {
+                    discard;
+            }
         }
+
+        FragColor *= texColor;
     } 
 
     if ( afficheNormales ) FragColor = vec4(N,1.0);
