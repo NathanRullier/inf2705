@@ -89,7 +89,11 @@ void main( void )
             float NdotL = dot( N, L );
             if ( NdotL > 0.0 )
             {
+                if(utiliseCouleur){
                 couleur += FrontMaterial.diffuse * LightSource.diffuse * NdotL;
+                }else{
+                    couleur = vec4(0.7,0.7,0.7,1.0);
+                }
 
                 vec3 O = normalize( AttribsIn.O );
                 float NdotHV;
