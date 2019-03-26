@@ -34,7 +34,7 @@ void main( void )
         // se préparer à produire une valeur un peu aléatoire
         uint seed = uint(temps * 1000.0) + uint(gl_VertexID);
         // faire renaitre la particule au puits
-        //positionMod = ...
+        positionMod = posPuits;
 
         // assigner un vitesse
         vitesseMod = vec3( mix( -0.5, 0.5, myrandom(seed++) ),   // entre -0.5 et 0.5
@@ -43,22 +43,24 @@ void main( void )
         //vitesseMod = vec3( -0.8, 0., 0.6 );
 
         // nouveau temps de vie
-        //tempsDeVieRestantMod = ...; // entre 0 et tempsDeVieMax secondes
-        tempsDeVieRestantMod = 0.0; // à modifier
+        tempsDeVieRestantMod = mix( 0.0, 10.0f, myrandom(seed++) );
 
         // interpolation linéaire entre COULMIN et COULMAX
         const float COULMIN = 0.2; // valeur minimale d'une composante de couleur lorsque la particule (re)naît
         const float COULMAX = 0.9; // valeur maximale d'une composante de couleur lorsque la particule (re)naît
-        //couleurMod = ...
+        couleurMod = vec4(  mix( COULMIN, COULMAX, myrandom(seed++) ),
+                            mix( COULMIN, COULMAX, myrandom(seed++) ),
+                            mix( COULMIN, COULMAX, myrandom(seed++) ),
+                            mix( COULMIN, COULMAX, myrandom(seed++) ) );
     }
     else
     {
         // avancer la particule (méthode de Euler)
-        positionMod = position; // ...
+        positionMod = position + vitesse*dt;
         vitesseMod = vitesse;
 
         // diminuer son temps de vie
-        tempsDeVieRestantMod = tempsDeVieRestant;
+        tempsDeVieRestantMod = tempsDeVieRestant - dt;
 
         // garder la couleur courante
         couleurMod = couleur;
@@ -70,7 +72,7 @@ void main( void )
         // ...
 
         // appliquer la gravité
-        // ...
+        vitesseMod.z -= gravite*dt;
     }
 
     // Mettre un test bidon afin que l'optimisation du compilateur n'élimine pas les attributs dt, gravite, tempsDeVieMax posPuits et bDim.

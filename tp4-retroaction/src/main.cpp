@@ -1,7 +1,6 @@
 // Prénoms, noms et matricule des membres de l'équipe:
-// - Prénom1 NOM1 (matricule1)
-// - Prénom2 NOM2 (matricule2)
-#warning "Écrire les prénoms, noms et matricule des membres de l'équipe dans le fichier et commenter cette ligne"
+// - Hugo Bourret-Desmarais 1742253
+// - Nathan Rullier
 
 #include <stdlib.h>
 #include <iostream>
@@ -54,7 +53,24 @@ void calculerPhysique( )
         // ... (MODIFIER)
         // glUniform...
         // glBindBufferBase(...);
+        glUniform1f( locdtRetroaction, Etat::dt );
+        glUniform1f( loctempsRetroaction, Etat::temps );
+        glUniform1f( loctempsDeVieMaxRetroaction, Etat::tempsDeVieMax );
+        glUniform1f( locgraviteRetroaction, Etat::gravite );
+        glUniform3fv( locposPuitsRetroaction, 1, glm::value_ptr(Etat::posPuits ));
+        glUniform3fv( locbDimRetroaction, 1, glm::value_ptr(Etat::bDim));
 
+
+        // dire où seront stockés les résultats
+        glBindBufferBase( GL_TRANSFORM_FEEDBACK_BUFFER, 0, vbo[1] );
+
+        glBindVertexArray( vao[1] );         // pour les résultats de la rétroaction, sélectionner le second VAO
+        // se préparer
+        glBindBuffer( GL_ARRAY_BUFFER, vbo[0] );  // utiliser les valeurs courantes
+        glVertexAttribPointer( locpositionRetroaction, 3, GL_FLOAT, GL_FALSE, sizeof(Particule), reinterpret_cast<void*>( offsetof(Particule, position) ) );
+        glVertexAttribPointer( loccouleurRetroaction, 4, GL_FLOAT, GL_FALSE, sizeof(Particule), reinterpret_cast<void*>( offsetof(Particule, couleur) ) );
+        glVertexAttribPointer( locvitesseRetroaction, 3, GL_FLOAT, GL_FALSE, sizeof(Particule), reinterpret_cast<void*>( offsetof(Particule, vitesse) ) );
+        glVertexAttribPointer( loctempsDeVieRestantRetroaction, 1, GL_FLOAT, GL_FALSE, sizeof(Particule), reinterpret_cast<void*>( offsetof(Particule, tempsDeVieRestant) ) );
 
         // débuter la requête (si impression)
         if ( Etat::impression )
@@ -63,6 +79,16 @@ void calculerPhysique( )
         // « dessiner »
         // ... (MODIFIER)
         // glDrawArrays( GL_POINTS, ... );
+        // désactiver le tramage
+        glEnable( GL_RASTERIZER_DISCARD );
+        // débuter la rétroaction
+        glBeginTransformFeedback( GL_POINTS );
+        // « dessiner » (en utilisant le vbo[0])
+        glDrawArrays( GL_POINTS, 0, Etat::nparticules );
+        // terminer la rétroaction
+        glEndTransformFeedback();
+        // réactiver le tramage
+        glDisable( GL_RASTERIZER_DISCARD );
 
         // terminer la requête (si impression)
         if ( Etat::impression )
@@ -295,8 +321,9 @@ void chargerNuanceurs()
         }
 
         // À MODIFIER (partie 1)
-        //const GLchar* vars[] = { ... };
-        //glTransformFeedbackVaryings( progRetroaction, sizeof(vars)/sizeof(vars[0]), vars, GL_INTERLEAVED_ATTRIBS );
+        // dire quelles variables on veut récupérer
+        const GLchar* vars[] = { "positionMod", "couleurMod", "vitesseMod", "tempsDeVieRestantMod"  };
+        glTransformFeedbackVaryings( progRetroaction, sizeof(vars)/sizeof(vars[0]), vars, GL_INTERLEAVED_ATTRIBS );
 
         // faire l'édition des liens du programme
         glLinkProgram( progRetroaction );
