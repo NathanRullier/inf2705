@@ -81,6 +81,7 @@ void main( void )
         // collision avec le sol ?
         if( positionMod.z <= 0.0f ) {
             vitesseMod.z = -vitesseMod.z;
+            positionMod.z = 0.0f;
         }
 
         // appliquer la gravité
