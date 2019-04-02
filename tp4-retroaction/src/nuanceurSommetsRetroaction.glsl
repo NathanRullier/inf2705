@@ -66,12 +66,21 @@ void main( void )
         couleurMod = couleur;
 
         // collision avec la demi-sphère ?
-        // ...
+        vec3 posSphUnitaire = positionMod / bDim;
+        vec3 vitSphUnitaire = vitesseMod * bDim;
+
+        float dist = sqrt(pow(posSphUnitaire.x, 2) + pow(posSphUnitaire.y, 2) + pow(posSphUnitaire.z, 2));
+
+        if (dist >= 1) {
+            positionMod = ( 2.0 - dist ) * positionMod;
+            vec3 N = posSphUnitaire / dist; //  normaliser N
+            vec3  vitReflechieSphUnitaire = reflect( vitSphUnitaire , N );
+            vitesseMod = vitReflechieSphUnitaire / bDim;
+        }
 
         // collision avec le sol ?
         if( positionMod.z <= 0.0f ) {
-            positionMod.z = 0.0f;
-            vitesseMod = 
+            vitesseMod.z = -vitesseMod.z;
         }
 
         // appliquer la gravité
