@@ -43,6 +43,8 @@ void main()
         gl_PointSize = fact;
 
         AttribsOut.texCoord =  coins[i] + vec2(0.5,0.5);
+        if (texnumero == 2 || texnumero == 3)
+            AttribsOut.texCoord.x = mod(AttribsOut.texCoord.x + (18.*AttribsIn[0].tempsDeVieRestant), 16);
 
         // assigner la couleur courante
         AttribsOut.couleur = AttribsIn[0].couleur;
