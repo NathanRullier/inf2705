@@ -3,12 +3,19 @@ Indice: pour bien répondre à ces deux questions, essayez de voir si votre rép
 
 Q1: Dans la partie 1, des points de taille fixe sont affichés à l'écran. Leur taille est donnée par la variable gl_PointSize.
     i) Comment faire pour que la taille d'un point varie de façon inverse à sa distance du plan avant du volume de visualisation, c'est-à-dire qu'il soit plus gros lorsqu'il est plus près de la caméra ?
+    Dans le nuanceur de somemt, nous pouvons calculer la position du vertex dans l'espace de l'utilisateur comme suit : gl_Position = matrVisu * matrModel * matrProj * Vertex; 
+    Nous pouvons donc avoir acces a la distance entre ce vertex et la position de l'observateur comme suit: gl_Position.z / gl_Position.w; Ainsi, il est possible de modifier
+    le gl_PointSize en fonction de la distance.
+
     ii) Donnez l'énoncé GLSL que vous utiliseriez pour implanter ceci.
+    dist = gl_Position.z / gl_Position.w;
+    gl_PointSize /= dist
 
 
 
 Q2: Pour afficher une étincelle qui tourne sur elle-même, on a appliqué une matrice de rotation sur les quatre sommets.
     i) Pourrait-on faire tourner l'étincelle en appliquant la même matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des sommets?
+    Non
     ii) Quel problème observerions-nous alors et comment devrait-il être corrigé?
-
-    Afin de facilement répondre à cette question, vous pouvez remplacer (temporairement!) l'image de l'étincelle de ce TP par l'image de l'échiquier du TP3.  Si vous appliquez ensuite la matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des sommets, vous pourrez alors très bien voir ce qui se passe.
+    Si nous effectuons la rotations sur les coordonees de textures, l'image imprime sur la particule aura la meme orientation que celle du fichier de textures, mais
+    il y aura des morceaux manquants. Dans ce cas, le seul moyen de remedier au probleme, est d'effectuer la rotation sur la particule.

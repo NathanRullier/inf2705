@@ -14,13 +14,15 @@ layout(location=5) in float tempsDeVieRestant;
 out Attribs {
     vec4 couleur;
     float tempsDeVieRestant;
-    //float sens; // du vol
+    float sens; // du vol
 } AttribsOut;
 
 void main( void )
 {
     // transformation standard du sommet
     gl_Position = matrVisu * matrModel * Vertex;
+
+    AttribsOut.sens = sign((vitesse * mat3(matrProj*matrModel*matrVisu)).x);
 
     AttribsOut.tempsDeVieRestant = tempsDeVieRestant;
 

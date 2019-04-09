@@ -7,7 +7,7 @@ layout(triangle_strip, max_vertices = 4) out;
 in Attribs {
     vec4 couleur;
     float tempsDeVieRestant;
-    //float sens; // du vol
+    float sens; // du vol
 } AttribsIn[];
 
 out Attribs {
@@ -38,18 +38,23 @@ void main()
             mat2 trans = mat2(cos(angle),-sin(angle),sin(angle),cos(angle));
             coins[i] = coins[i]*trans;
         }
+        else if(AttribsIn[0].sens < 0.0){
+            coins[i].x *= -1;
+        }
 
         // assigner la taille des points (en pixels)
         gl_PointSize = fact;
 
         AttribsOut.texCoord =  coins[i] + vec2(0.5,0.5);
+
         if (texnumero == 2 || texnumero == 3)
-            AttribsOut.texCoord.x = mod(AttribsOut.texCoord.x + (18.*AttribsIn[0].tempsDeVieRestant), 16);
+        {
+            AttribsOut.texCoord.x = (AttribsOut.texCoord.x + mod(floor(18.*AttribsIn[0].tempsDeVieRestant), 16))/16.0;
+        }
 
         // assigner la couleur courante
         AttribsOut.couleur = AttribsIn[0].couleur;
 
         EmitVertex();
     }
-
 }

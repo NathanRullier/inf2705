@@ -434,7 +434,23 @@ void FenetreTP::conclure()
 void definirProjection( int OeilMult, int w, int h ) // 0: mono, -1: oeil gauche, +1: oeil droit
 {
     // partie 3: utiliser plutôt Frustum() pour le stéréo
-    matrProj.Perspective( 35.0, (GLdouble) w / (GLdouble) h, VueStereo::zavant, VueStereo::zarriere );
+    if( OeilMult == 0)
+    {
+        matrProj.Perspective( 35.0, (GLdouble) w / (GLdouble) h, VueStereo::zavant, VueStereo::zarriere );
+    }
+    else
+    {
+        const GLdouble resolution = 100.0; // pixels par pouce
+        GLdouble oeilDecalage = OeilMult * VueStereo::dip/2.0;
+        GLdouble proportionProfondeur = VueStereo::zavant / VueStereo::zecran;  // la profondeur du plan de parallaxe nulle
+
+        matrProj.Frustum( (-0.5 * w / resolution - oeilDecalage ) * proportionProfondeur,
+                        ( 0.5 * w / resolution - oeilDecalage ) * proportionProfondeur,
+                        (-0.5 * h / resolution                ) * proportionProfondeur,
+                        ( 0.5 * h / resolution                ) * proportionProfondeur,
+                        VueStereo::zavant, VueStereo::zarriere );
+        matrProj.Translate( -oeilDecalage, 0.0, 0.0 );
+    }
 }
 
 void afficherDecoration()
@@ -461,6 +477,7 @@ void afficherDecoration()
 
 void afficherModele()
 {
+    
     // afficher d'abord les décorations (en utilisant progBase)
     afficherDecoration();
 
@@ -481,6 +498,12 @@ void afficherModele()
     case 1: glBindTexture( GL_TEXTURE_2D, Etat::textureETINCELLE ); break;
     case 2: glBindTexture( GL_TEXTURE_2D, Etat::textureOISEAU ); break;
     case 3: glBindTexture( GL_TEXTURE_2D, Etat::textureBONHOMME ); break;
+    }
+    if(Etat::affichageStereo == affAnaglyphe) {
+        glDisableVertexAttribArray(locColor);
+        glVertexAttrib4f(locColor, 1.0, 1.0, 1.0, 1.0);
+    } else {
+        glEnableVertexAttribArray(locColor);
     }
 
     // tracer le résultat de la rétroaction
@@ -532,16 +555,34 @@ void FenetreTP::afficherScene()
 
     case affAnaglyphe: // stéréo anaglyphe
         // partie 3: à modifier pour afficher en anaglyphe
-        definirProjection( 0, largeur_, hauteur_ );
+        definirProjection( -1, largeur_, hauteur_ );
         glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+        glColorMask( GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE );
         afficherModele();
+
+        glClear( GL_DEPTH_BUFFER_BIT );
+        definirProjection( +1, largeur_, hauteur_ );
+        glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+        glColorMask( GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE );
+        afficherModele();
+
+        glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
         break;
 
     case affDouble: // stéréo double
         // partie 3: à modifier pour afficher en stéréo double
-        definirProjection( 0, largeur_, hauteur_ );
+        glViewport( 0 , 0, largeur_/2, hauteur_ ); // pour le viewport 0
+        definirProjection( -1, largeur_, hauteur_ );
         glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
         afficherModele();
+
+        glViewport( largeur_/2, 0, largeur_/2, hauteur_ ); // pour le viewport 0
+
+        definirProjection( 1, largeur_, hauteur_ );
+        glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+        afficherModele();
+
+        glViewport( 0, 0, largeur_, hauteur_ ); // pour le viewport 0
         break;
     }
 
